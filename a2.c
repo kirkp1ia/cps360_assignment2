@@ -1,3 +1,29 @@
+/*
+ * Names: Ian Kirkpatrick, Benjamin Groseclose, Nathan Johnson,
+ * Class: CPS 360,                            Section: Spring 2017
+ * Times: Tuesday, Thursday 9:30 - 11:00      Assignment: 02
+ * Due: February 7, 2017                      Started: January 31, 2017
+ * Credit: 15 points.
+ *
+ * Problem: Write a program that uses a set structure to store integers supplied
+ * by a file passed through stdin. The input will be in the following syntax:
+ *  3 15 12 51
+ * where the first number (3 in this case) is the length of the set and each
+ * subsequent number is a value that is to be stored in the set. There may be
+ * less numbers in the input than are allowed by the first number. The file may
+ * have several lines of input. Each line read in will cause the program to
+ * create a seperate set. It will then print out the sets information in the
+ * following format:
+ *
+ *  Set A: ## ## ## ## ... [or empty]
+ *  Set B: ## ## ## ## ... [or empty]
+ *  A union B: ## ## ## ## ## ## ## ## ... [or empty]
+ *  A intersection B: ## ## ... [or empty]
+ *  A difference B: ## ## ## ... [or empty]
+ *
+ * Solution: Unknown at the time.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 
