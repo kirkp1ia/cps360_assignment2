@@ -27,10 +27,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
 #define SIZE 32
 
-/* Clears the bits in the set s1 and also resets the set count
-to 0 */
+struct set{
+  char data[SIZE];
+  int count; /* count of elements/members */
+};
+typedef struct set set;
+
+/* Sets all elements in s1 to 0 and set the count to 0. */
 void initaset(set *s1) {
   int i;
   s1->count = 0;
@@ -39,7 +45,8 @@ void initaset(set *s1) {
     s1->data[i] = 0;
 }
 
-/* Returns 1 if x is in set st, 0 otherwise */
+
+/* Determin weather x is contained in st. */
 int isinset(int x, set st) {
   int i, j;
   i = x & 0x1f;
@@ -49,14 +56,15 @@ int isinset(int x, set st) {
   return 0;
 }
 
-/* Adds given element elm to set */
+/* Adds given element elm to set. elm can be found in the byte that corresponds
+to elm % 8. It then puts 1 << (elm % 8) */
 void addtoset(int elm, set *sl) {
   int i, j;
 
   i = elm & 0x1f;
   j = elm >> 3;
 
-  s1->data[i] = s1->data[i] | (l<<j);
+  s1->data[i] = s1->data[i] | (1<<j);
   s1->count += 1;
 }
 
@@ -100,5 +108,5 @@ int main(void) {
     dosetops(seta, setb);
     clearaset(&seta); clearaset(&setb);
   }
-exit(0);
+  exit(0);
 }

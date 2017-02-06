@@ -8,7 +8,7 @@ the following information for each set:
   3. Union of set A and B
   4. Intersection of set A and B
   5. Difference of set A and B.
-  
+
 Do this 3 times
 
 ### Solution:
