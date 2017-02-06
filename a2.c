@@ -29,6 +29,7 @@
 
 
 #define SIZE 32
+#define OUTPUT stdout
 
 /*
 Struct for set.
@@ -73,8 +74,8 @@ int isinset(int x, set st) {
   int i, j;
   int mod(int num, int mod);
   
-  i = elm >> 3;
-  j = mod(elm, 8);
+  i = x >> 3;
+  j = mod(x, 8);
 
   if (st.data[i] & (1<<j)) return 1;
   return 0;
@@ -86,7 +87,7 @@ to elm / 8. It then sets the bit at elm % 8 in that byte to on.
 
 Limitations: none.
 */
-void addtoset(int elm, set *sl) {
+void addtoset(int elm, set *s1) {
   int i, j;
   int mod(int num, int mod);
   
@@ -119,9 +120,47 @@ perform the set operations and print results as needed.
 void dosetops(set sea, set setb);
 
 /*
-Writes the label followed by members of s1 to stderr
+Prints every element in set s1 prepended by label. The print is in the format
+
+  label: s1[0] s1[1] s1[2] etc...
+
+For example, if label is "Set A:" and s1 has elements 3, 6, 2, 8 and 4, then
+  printaset will print
+  
+  "Set A: 2 3 4 6 8".
+
+The printed elements will be in order because of the way the set stores it's
+  elements.
+  
+This function loops through each bit in the set and adds the corresponding
+  number to the printed output. In order to get the indevidual values from
+  each byte, we loop through 0 to 8. each iteration, we bit shift the byte
+  that many places and extract the first bit. If the bit is 1, then we know that
+  the number associated with that bit is in the set so we print it out.
 */
-void printaset(char *label, set s1);
+void printaset(char *label, set s1) {
+  fprintf(OUTPUT, "%s:", label);
+  if (s1.count > 0) {
+    int i;
+    
+    for (i = 0; i < 1; i++) {
+      int base = i << 3;
+      char byte = s1.data[i] >> 1;
+      
+      for (int j = 0; j < 8; j++) {
+        int rem = byte >> j;
+        // printf("byte: %d - %02x:\n\tj: %d: %02x;\n", i, byte, j, rem);
+        if (rem & 0x01) {
+          int val = base + j-1;
+          fprintf(OUTPUT, " %d", val);
+        }
+      }
+    }
+  } else {
+    fprintf(OUTPUT, " empty");
+  }
+  fprintf(OUTPUT, "\n");
+}
 
 /*
 populates the set using values read stdin,
@@ -135,7 +174,7 @@ Wrapper for initaset() call. All this function does is calls initaset. This
   acts like a refresh function for a given set.
 */
 void clearaset(set *s1) {
-  initaset(&s1);
+  initaset(s1);
 }
 
 /*
@@ -164,19 +203,25 @@ int mod(int num, int mod) {
 
 int main(void) {
   set seta, setb;
-  int i;
 
-  int initaset(set *s1);
+  void initaset(set *s1);
   int isinset(int x, set st);
   void addtoset(int elm, set *sl);
   void freeaset(set *s1);
   
   initaset(&seta); initaset(&setb);
 
-  addtoset(4, &seta);
+  addtoset(2, &seta);
+  
+  char labela[] = "Set A";
+  char labelb[] = "Set B";
+  printaset(labela, seta);
+  printaset(labelb, setb);
   
   clearaset(&seta);
   clearaset(&setb);
+  
+  // int i;
   // for(i= 0; i < 3; i++) {
   //   if(!buildaset(&seta) || !buildaset(&setb)) {
   //     fprintf(stderr, "Set build failure. \n");
