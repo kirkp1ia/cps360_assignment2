@@ -50,6 +50,43 @@ struct set{
 };
 typedef struct set set;
 
+int main(void) {
+  set seta, setb;
+
+  void initaset(set *s1);
+  int isinset(int x, set st);
+  void addtoset(int elm, set *sl);
+  void freeaset(set *s1);
+
+  initaset(&seta); initaset(&setb);
+
+  addtoset(7, &seta);
+  addtoset(5, &seta);
+  addtoset(26, &seta);
+  addtoset(8, &seta);
+
+  char labela[] = "Set A";
+  char labelb[] = "Set B";
+  printaset(labela, seta);
+  printaset(labelb, setb);
+
+  clearaset(&seta);
+  clearaset(&setb);
+
+  // int i;
+  // for(i= 0; i < 3; i++) {
+  //   if(!buildaset(&seta) || !buildaset(&setb)) {
+  //     fprintf(stderr, "Set build failure. \n");
+  //     clearaset(&seta); clearaset(&setb); continue;
+  //   }
+  //
+  //   printaset("Set A: ", seta); printaset("Set B: ", setb);
+  //   dosetops(seta, setb);
+  //   clearaset(&seta); clearaset(&setb);
+  // }
+  exit(0);
+}
+
 /*
 Sets all elements in s1 to 0 and set the count to 0.
 */
@@ -73,7 +110,7 @@ Limitations: none.
 int isinset(int x, set st) {
   int i, j;
   int mod(int num, int mod);
-  
+
   i = x >> 3;
   j = mod(x, 8);
 
@@ -90,7 +127,7 @@ Limitations: none.
 void addtoset(int elm, set *s1) {
   int i, j;
   int mod(int num, int mod);
-  
+
   i = elm >> 3;
   j = mod(elm, 8);
 
@@ -99,19 +136,38 @@ void addtoset(int elm, set *s1) {
 }
 
 /*
-sets the value of s3 to the union of sets s1 and s2
+Sets the value of s3 to the union of sets s1 and s2. Do this by extracting all
+  bits in s1 and s2 into s3 using the | (OR) operator with s1 and s2. s3 will
+  contain the union of s1 and s2.
 */
-void setunion(set s1, set s2, set *s3);
+void setunion(set s1, set s2, set *s3) {
+  s3->data = s1.data | s2.data;
+  s3->count = s1.count + s2.count;
+}
 
 /*
-sets the value of s3 to the intersection of sets s1 and s2
+Sets the value of s3 to the intersection of sets s1 and s2. Do this by
+  extracting all bits that are in both s1 and s2 into s3 using the & (AND)
+  operator with s1 and s2. s3 will contain the intersection of s1 and s2.
+
+Limitations: count in s3 is Unknown because we don't know how many bits were
+  extracted from both sets into s3.
 */
-void setintersection(set s1, set s2, set *s3);
+void setintersection(set s1, set s2, set *s3) {
+  s3->data = s1.data & s2.data;
+}
 
 /*
-sets the value of s3 to the intersection of sets s1 and s2
+Sets the value of s3 to the intersection of sets s1 and s2. Do this by
+  extracting all bits that are in both s1 and s2 into s3 using the & (AND)
+  operator with s1 and s2. s3 will contain the intersection of s1 and s2.
+
+Limitations: count in s3 is Unknown because we don't know how many bits were
+  extracted from both sets into s3.
 */
-void setdiff(set s1, set s2, set *s3);
+void setdiff(set s1, set s2, set *s3) {
+  s3->data = s1.data ^ s2.data;
+}
 
 /*
 perform the set operations and print results as needed.
@@ -126,32 +182,33 @@ Prints every element in set s1 prepended by label. The print is in the format
 
 For example, if label is "Set A:" and s1 has elements 3, 6, 2, 8 and 4, then
   printaset will print
-  
+
   "Set A: 2 3 4 6 8".
 
 The printed elements will be in order because of the way the set stores it's
   elements.
-  
+
 This function loops through each bit in the set and adds the corresponding
   number to the printed output. In order to get the indevidual values from
   each byte, we loop through 0 to 8. each iteration, we bit shift the byte
   that many places and extract the first bit. If the bit is 1, then we know that
-  the number associated with that bit is in the set so we print it out.
+  the number associated with that bit is in the set. The index in the byte that
+  the bit is at is the remainder that will be added on to the base
+  (or 8 * byte_number). Then print it out.
 */
 void printaset(char *label, set s1) {
   fprintf(OUTPUT, "%s:", label);
   if (s1.count > 0) {
     int i;
-    
-    for (i = 0; i < 1; i++) {
+
+    for (i = 0; i < SIZE; i++) {
       int base = i << 3;
-      char byte = s1.data[i] >> 1;
-      
+      char byte = s1.data[i];
+
       for (int j = 0; j < 8; j++) {
         int rem = byte >> j;
-        // printf("byte: %d - %02x:\n\tj: %d: %02x;\n", i, byte, j, rem);
         if (rem & 0x01) {
-          int val = base + j-1;
+          int val = base + j;
           fprintf(OUTPUT, " %d", val);
         }
       }
@@ -199,38 +256,4 @@ Limitations: none
 */
 int mod(int num, int mod) {
   return num & (mod-1);
-}
-
-int main(void) {
-  set seta, setb;
-
-  void initaset(set *s1);
-  int isinset(int x, set st);
-  void addtoset(int elm, set *sl);
-  void freeaset(set *s1);
-  
-  initaset(&seta); initaset(&setb);
-
-  addtoset(2, &seta);
-  
-  char labela[] = "Set A";
-  char labelb[] = "Set B";
-  printaset(labela, seta);
-  printaset(labelb, setb);
-  
-  clearaset(&seta);
-  clearaset(&setb);
-  
-  // int i;
-  // for(i= 0; i < 3; i++) {
-  //   if(!buildaset(&seta) || !buildaset(&setb)) {
-  //     fprintf(stderr, "Set build failure. \n");
-  //     clearaset(&seta); clearaset(&setb); continue;
-  //   }
-  // 
-  //   printaset("Set A: ", seta); printaset("Set B: ", setb);
-  //   dosetops(seta, setb);
-  //   clearaset(&seta); clearaset(&setb);
-  // }
-  exit(0);
 }

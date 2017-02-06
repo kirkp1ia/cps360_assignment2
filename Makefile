@@ -7,7 +7,7 @@
 #
 #################################################################
 
-CFLAGS  = -g -Wall -Werror
+CFLAGS  = -g -Wall -Werror -ansi -pedantic
 LDFLAGS =
 CC	= gcc
 LD	= gcc
